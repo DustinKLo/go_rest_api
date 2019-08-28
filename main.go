@@ -37,8 +37,8 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r) // get params
 	// loop through books and find id
 	for _, item := range books {
-		fmt.Println(item)
 		if item.ID == params["id"] {
+			fmt.Println(item)
 			json.NewEncoder(w).Encode(item)
 			return
 		}
@@ -62,13 +62,39 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
-func updateBook(w http.ResponseWriter, r *http.Request) {}
+func deleteBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r) // get params
 
-func deleteBook(w http.ResponseWriter, r *http.Request) {}
+	for i, item := range books {
+		if item.ID == params["id"] {
+			books = append(books[:i], books[i+1:]...)
+			break
+		}
+	}
+	fmt.Println(books)
+	json.NewEncoder(w).Encode(books)
+}
+
+func updateBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r) // get params
+	var book Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+
+	for i, item := range books {
+		if item.ID == params["id"] {
+			book.ID = params["id"]
+			books = append(books[:i], books[i+1:]...)
+			books = append(books, book)
+			break
+		}
+	}
+	fmt.Println(books)
+	json.NewEncoder(w).Encode(books)
+}
 
 func main() {
-	fmt.Println("Hello World")
-
 	// init mux router
 	r := mux.NewRouter()
 
@@ -101,6 +127,7 @@ func main() {
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
+	fmt.Printf("Server running on port %d!\n", 8000)
 	server := http.ListenAndServe(":8000", r)
 	log.Fatal(server)
 }
