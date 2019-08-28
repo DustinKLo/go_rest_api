@@ -14,6 +14,7 @@ func main() {
 	r := mux.NewRouter()
 
 	// route handler / endpoints
+	r.HandleFunc("/", L.BaseRoute).Methods("GET")
 	r.HandleFunc("/api/books", L.GetBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", L.GetBook).Methods("GET")
 	r.HandleFunc("/api/books", L.CreateBook).Methods("POST")
