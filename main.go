@@ -13,6 +13,9 @@ func main() {
 	// init mux router
 	r := mux.NewRouter()
 
+	L.TestPrintFunction()
+	fmt.Printf("Importing variable from package 'function' %d\n", L.TestVariable)
+
 	// route handler / endpoints
 	r.HandleFunc("/", L.BaseRoute).Methods("GET")
 	r.HandleFunc("/api/books", L.GetBooks).Methods("GET")
